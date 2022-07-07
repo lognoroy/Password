@@ -1,0 +1,238 @@
+<!-- saved from url=(0036)http://localhost/mooccal/login/fpass -->
+<html><head><meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+
+	
+	<title>Forget Password</title>
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+	<link rel="icon" href="http://localhost/mooccal/css/img/MOOCs%20Cal%20Logo%20Circle.png" type="image/png" sizes="16x16">
+    <link rel="stylesheet" href="css/style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link href="https://fonts.googleapis.com/css2?family=Raleway:wght@100;300&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@700;900&display=swap" rel="stylesheet">
+	<script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
+</head>
+<body data-new-gr-c-s-check-loaded="14.1020.0" data-gr-ext-installed="">
+	<!-- <pre> -->
+		<div class="master">
+		<div class="form">
+			<form id="mailform">
+				<div class="head">
+                    <h1>Set New Password</h1>
+                </div>
+				<div class="first" id="useridbox">
+					<label for="name">User I.D.</label>
+					<br>
+                    <br>
+					<input type="text" name="userid" id="userid" placeholder="User I.D.">
+					<label class="errortext"></label>
+					<br>
+                    <br>
+                    <br>
+				</div>
+				<div class="send">
+					<button id="sendotp">Send OTP</button>
+				</div>
+				<br>
+				<br>
+			</form>
+			<form id="otpform">
+				<div class="second" id="otpbox">
+					<label for="name">OTP</label>
+					<br>
+					<br>
+					<input type="text" name="otp" id="otp" placeholder="OTP">
+					<label class="errortext"></label>
+					<br>
+					<br>
+					<br>
+					<br>
+				</div>
+				<div class="send">
+					<button id="verifyotp" disabled="">Verify OTP</button>
+				</div>
+				<br>
+				<br>
+			</form>
+			<form id="passform">
+				<div class="join67 clearfix">
+					<div class="sixth" id="passbox">
+						<label for="pass">Password</label>
+						<br>
+						<br>
+						<input type="password" name="pass" id="pass" placeholder="Password">
+						<button type="button" class="little1"><span class="fa fa-eye-slash"></span></button>
+						<label class="errortext"></label>
+						<br>
+						<br>
+					</div>
+					<div class="seventh" id="cpassbox">
+						<label for="cpass">Confirm Password</label>
+						<br>
+						<br>
+						<input type="password" name="cpass" id="cpass" placeholder="Confirm Password">
+						<button type="button" class="little1"><span class="fa fa-eye-slash"></span></button>
+						<label class="errortext"></label>
+						<br>
+						<br>
+					</div>
+					<div class="eighth">
+						<button id="submitpass" disabled="">Submit</button>
+					</div>
+					<br>
+					<br>
+				</div>
+			</form>
+		</div>
+	</div>
+
+	<script type="text/javascript">
+		$(document).ready(function(){
+			$('#sendotp').click(function(e){
+				e.preventDefault();
+
+				$('.errortext').text('');
+				$('.errortext').html('');
+				$('.errortext').css('backgroundColor', 'transparent');
+				$('#sendotp').text('Sending OTP...');
+				var val = $('#userid').serialize();
+				// console.log(val);
+				$.ajax({
+					url: 	'http://localhost:80/mooccal/login/fpassotp',
+					type: 	'post',
+		 			data: 	val,
+
+		 			success: function(result) {
+		 				// console.log(result);
+						$('#sendotp').text('Send OTP');
+		 				if (result == '1') {
+			 				$('#verifyotp').attr('disabled', false);
+			 				alert('The OTP is sent');
+						}
+						else if (result == '2') {
+							alert('Sorry! OTP could not be sent.');
+						}
+		 				else if (result == '3') {
+	 						$('#userid').addClass('error');
+	 						$('#useridbox .errortext').html('<i class="fa fa-times-circle"></i> ' + 'This given id is corrupted. Please contact the developer.');
+	 						$('#useridbox .errortext').css('display', 'block');
+	 						$('#useridbox .errortext').css('backgroundColor', '#FFBABA');
+			 			}
+						else if (result == '4') {
+	 						$('#userid').addClass('error');
+	 						$('#useridbox .errortext').html('<i class="fa fa-times-circle"></i> ' + 'Your mail id is not set.');
+	 						$('#useridbox .errortext').css('display', 'block');
+	 						$('#useridbox .errortext').css('backgroundColor', '#FFBABA');
+						}
+						else if (result == '5') {
+	 						$('#userid').addClass('error');
+	 						$('#useridbox .errortext').html('<i class="fa fa-times-circle"></i> ' + 'User I.D. does not exist.');
+	 						$('#useridbox .errortext').css('display', 'block');
+	 						$('#useridbox .errortext').css('backgroundColor', '#FFBABA');
+						}
+						else {
+			 				result = JSON.parse(result);
+							
+	 						if (result['userid']) {
+		 						$('#userid').addClass('error');
+		 						$('#useridbox .errortext').html('<i class="fa fa-times-circle"></i> ' + result['userid']);
+		 						$('#useridbox .errortext').css('display', 'block');
+		 						$('#useridbox .errortext').css('backgroundColor', '#FFBABA');
+		 					}
+						}
+		 			}
+				});
+			});
+			$('#verifyotp').click(function(e){
+				e.preventDefault();
+
+				$('.errortext').text('');
+				$('.errortext').html('');
+				$('.errortext').css('backgroundColor', 'transparent');
+				var val = $('#otp').serialize();
+				// console.log(val);
+				$.ajax({
+					url: 	'http://localhost:80/mooccal/login/verifyotp',
+					type: 	'post',
+		 			data: 	val,
+
+		 			success: function(result) {
+		 				// console.log(result);
+		 				if (result == '1') {
+		 					$('#submitpass').attr('disabled', false);
+						}
+						else if (result == '2') {
+							alert('OTP did not match.');
+						}
+						else {
+			 				result = JSON.parse(result);
+		 					if (result['otp']) {
+		 						$('#otp').addClass('error');
+		 						$('#otpbox .errortext').html('<i class="fa fa-times-circle"></i> ' + result['otp']);
+		 						$('#otpbox .errortext').css('display', 'block');
+		 						$('#otpbox .errortext').css('backgroundColor', '#FFBABA');
+		 					}
+						}
+		 			}
+				});
+			});
+			$('#submitpass').click(function(e){
+				e.preventDefault();
+
+				$('.errortext').text('');
+				$('.errortext').html('');
+				$('.errortext').css('backgroundColor', 'transparent');
+				var val = $('#pass, #cpass').serialize();
+				// console.log(val);
+				$.ajax({
+					url: 	'http://localhost:80/mooccal/login/updatepass',
+					type: 	'post',
+		 			data: 	val,
+
+		 			success: function(result) {
+		 				// console.log(result);
+		 				if (result == '1') {
+		 					alert("Password is updated.");
+			 				window.location.assign('http://localhost:80/mooccal/');
+						}
+						else if (result == '2') {
+							alert('Sorry! Password could not be updated.');
+						}
+						else {
+			 				result = JSON.parse(result);
+		 					if (result['pass']) {
+		 						$('#pass').addClass('error');
+		 						$('#passbox .errortext').html('<i class="fa fa-times-circle"></i> ' + result['pass']);
+		 						$('#passbox .errortext').css('display', 'block');
+		 						$('#passbox .errortext').css('backgroundColor', '#FFBABA');
+		 					}
+		 					if (result['cpass']) {
+		 						$('#cpass').addClass('error');
+		 						$('#cpassbox .errortext').html('<i class="fa fa-times-circle"></i> ' + result['cpass']);
+		 						$('#cpassbox .errortext').css('display', 'block');
+		 						$('#cpassbox .errortext').css('backgroundColor', '#FFBABA');
+		 					}
+						}
+		 			}
+				});
+			});
+
+
+			$('.little1 span').click(function(){
+				if ($('.little1 span').hasClass('fa-eye')) {
+					$('.little1 span').addClass('fa-eye-slash');
+					$('.little1 span').removeClass('fa-eye');
+					$('#pass').attr('type', 'password');
+					$('#cpass').attr('type', 'password');
+				} else {
+					$('.little1 span').addClass('fa-eye');
+					$('.little1 span').removeClass('fa-eye-slash');
+					$('#pass').attr('type', 'text');
+					$('#cpass').attr('type', 'text');
+				}
+			});
+		});
+	</script>
+
+</body></html>
